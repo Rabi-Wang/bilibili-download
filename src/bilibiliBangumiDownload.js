@@ -4,25 +4,38 @@ const fs = require('fs')
 
 const bilibiliBangumiDownload = () => {
 
-    const getEpList = (ep) => {
+    /* 根据番剧ep号获取番剧列表
+    * @param ep 番剧ep号
+    * return 番剧所有剧集列表(aid, cid, title)
+    * */
+    const getBangumiInfo = (ep) => {
         let url = `https://www.bilibili.com/bangumi/play/ep${ep}`
         return axios.get(url)
             .then(res => res.data)
             .then(resData => {
                 const filterData = resData.match(/INITIAL_STATE__=(.*?"]})/)
                 const jsonData = JSON.parse(filterData[1])
-                const { epList } = jsonData
-                const newEpList = epList.map(item => ({
-                    aid: item.aid,
-                    cid: item.cid,
-                    title: `${item.title}${item.longTitle}`
-                }))
-                console.log(`epList: ${JSON.stringify(newEpList)}`)
-                return newEpList
+                const { epList, mediaInfo: { title } } = jsonData
+                const bangumiInfo = {
+                    bangumiName: title,
+                    epList: epList.map(item => ({
+                        aid: item.aid,
+                        cid: item.cid,
+                        title: `${item.title}${item.longTitle}`
+                    }))
+                }
+                return bangumiInfo
             })
     }
 
-    const getPlayList = (aid, cid, quality = 80) => {
+    /*
+    * 获取视频的播放链接(包括含有多p的视频)
+    * @param aid 视频av号
+    * @param cid 真正的视频id
+    * @param quality 视频的分辨率(80 => 1080p, 64 => 720p, 32 => 480p, 16 => 320p)
+    * return 视频的播放链接
+    * */
+    const getPlayList = (aid, cid, quality) => {
         let url = `https://api.bilibili.com/x/player/playurl?cid=${cid}&avid=${aid}&qn=${quality}`
         const headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
@@ -33,19 +46,39 @@ const bilibiliBangumiDownload = () => {
             .then(res => res.data)
             .then(resData => {
                 const { data: { durl } } = resData
-                const playList = durl.map(item => ({
-                    url: item.url,
-                }))
-                console.log(`playList: ${JSON.stringify(playList)}`)
-                return playList
+                return durl.map(item => item.url)
             })
     }
 
-    const downloadVideo = async (downloadUrl, title, ep, downloadPath = 'E:\\code\\node\\bilibili-download\\video') => {
-        if (!fs.existsSync(downloadPath)) {
-            fs.rmdirSync(downloadPath)
+    /* 在剧集列表中添加播放链接
+    * @param epList 番剧剧集列表
+    * @param quality 视频质量
+    * return 剧集信息
+    * */
+    const getAllVideoInfo = async (epList, quality) => {
+        let newEpList = []
+        for(let item of epList) {
+            const url = await getPlayList(item.aid, item.cid, quality)
+            newEpList.push({
+                url: url,
+                ...item,
+            })
         }
-        const filePath = path.resolve(downloadPath, `${title}.flv`)
+        return newEpList
+    }
+
+    /* 下载视频
+    * @param downloadUrl 视频播放链接
+    * @param title 下载视频的文件名
+    * @param ep 番剧ep号
+    * @param bangumiName 对应番剧名的文件夹
+    * @param downloadPath 视频保存的路径
+    *  */
+    const downloadVideoCore = async (downloadUrl, title, ep, bangumiName, downloadPath) => {
+        const newDownloadPath = `${downloadPath}\\${bangumiName}`
+        !fs.existsSync(newDownloadPath) && fs.mkdirSync(newDownloadPath)
+
+        const filePath = path.resolve(newDownloadPath, `${title}.mp4`)
         const writer = fs.createWriteStream(filePath)
         let url = `https://www.bilibili.com/bangumi/play/ep${ep}`
         const headers = {
@@ -72,14 +105,18 @@ const bilibiliBangumiDownload = () => {
         })
     }
 
-    const bangumiDownload = (ep = 267851) => {
-        getEpList(ep)
-            .then(epList => {
-                getPlayList(epList[0].aid, epList[0].cid)
-                    .then(playList => {
-                        downloadVideo(playList[0].url, epList[0].title, ep)
-                    })
-            })
+    const downloadVideo = (videoInfo, ep, bangumiName, downloadPath) => {
+        videoInfo.forEach(item => item.url.forEach((url, index) => downloadVideoCore(url, `${item.title}${index > 0 ? `-${index}` : ''}`, ep, bangumiName, downloadPath)))
+    }
+
+    const bangumiDownload = async (ep, quality = 80, downloadPath) => {
+        const bangumiInfo = await getBangumiInfo(ep)
+        const { epList, bangumiName } = bangumiInfo
+        console.log(`epList: ${JSON.stringify(epList)}`)
+        const videoInfo = await getAllVideoInfo(epList, quality)
+        console.log(`videoInfo: ${JSON.stringify(videoInfo)}`)
+        console.log(`bangumiName: ${bangumiName}`)
+        downloadVideo(videoInfo, ep, bangumiName, downloadPath)
     }
 
     return {
