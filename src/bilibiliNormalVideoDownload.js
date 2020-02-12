@@ -3,6 +3,13 @@ const downloadCore = require('./utils/downloadCore').downloadCore
 const getPlayList = require('./utils/getPlayList').getPlayList
 
 const bilibiliNormalVideoDownload = () => {
+
+    /*
+    * 根据av号获取视频信息
+    * @param aid 视频av号
+    * @param quality 视频分辨率
+    * return 视频信息(aid, title, cid, pages, quality)
+    * */
     const getVideoInfo = (aid, quality) => {
         let url = `https://api.bilibili.com/x/web-interface/view?aid=${aid}`
         return axios.get(url)
@@ -13,6 +20,11 @@ const bilibiliNormalVideoDownload = () => {
             })
     }
 
+    /*
+    * 获取视频播放地址
+    * @param videoInfo 视频信息
+    * return 视频播放地址
+    * */
     const getAllVideoInfo = async (videoInfo) => {
         const { pages, aid, quality } = videoInfo
         let downloadInfos = []
