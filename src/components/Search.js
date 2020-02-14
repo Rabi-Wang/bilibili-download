@@ -1,12 +1,29 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Input, Card, Skeleton, Divider } from 'antd'
+import { Input } from 'antd'
 import DownloadInfoModal from "./DownloadInfoModal";
+import VideoContent from "./VideoContent";
 
 const initialValue = {
     code: '',
     loading: false,
     downloadInfoModalVisible: false,
+}
+
+const cleanAvInfo = {
+    pages: '',
+    pic: '',
+    avTitle: '',
+    name: '',
+    view: '',
+    desc: '',
+}
+
+const cleanEpInfo = {
+    epTitle: '',
+    epList: '',
+    cover: '',
+    evaluate: '',
 }
 
 const Search = () => {
@@ -15,12 +32,11 @@ const Search = () => {
     const [epInfo, setEpInfo] = useState({})
     const [downloadInfo, setDownloadInfo] = useState({})
     const { loading, downloadInfoModalVisible, code } = state
-    const { pages, pic, avTitle, name, view, desc } = avInfo
-    const { epTitle, epList, cover, evaluate } = epInfo
+    const { avTitle } = avInfo
+    const { epTitle } = epInfo
 
     const handleSearch = (code) => {
         const tmpCode = code.toLowerCase()
-        console.log(tmpCode)
         const av = /.*av.*/
         const ep = /.*ep.*/
         if(av.test(tmpCode)) {
@@ -30,12 +46,15 @@ const Search = () => {
                 .then(resData => {
                     console.log(resData)
                     const { code } = resData
-                    if(code !== -404) {
+                    if(code !== -404 && code !== 62002) {
                         const { data: { pic, title, owner: { name }, stat: { view }, pages, desc } } = resData
                         setState({ ...state, loading: false, code: tmpCode })
                         setAvInfo({ pic, avTitle: title, name, view, pages, desc })
+                        setEpInfo(cleanEpInfo)
                     } else {
                         setState({ ...state, loading: false, code: tmpCode })
+                        setEpInfo(cleanEpInfo)
+                        setAvInfo(cleanAvInfo)
                     }
                 })
         } else if(ep.test(tmpCode)) {
@@ -52,7 +71,12 @@ const Search = () => {
                     }))
                     setState({ ...state, loading: false, code: tmpCode })
                     setEpInfo({ epList: newEpList, epTitle: title, cover, evaluate })
-                    console.log(resData)
+                    setAvInfo(cleanAvInfo)
+                })
+                .catch(err => {
+                    console.log(err)
+                    setEpInfo(cleanEpInfo)
+                    setAvInfo(cleanAvInfo)
                 })
         }
     }
@@ -68,7 +92,7 @@ const Search = () => {
     }
 
     return (
-        <div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", padding: "10px 0" }}>
                 <Input.Search
                     size="large"
@@ -79,85 +103,7 @@ const Search = () => {
                     placeholder="输入视频av号或番剧ep号"
                 />
             </div>
-            <Skeleton loading={loading} active>
-                {Array.isArray(pages) && (
-                    <div>
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <Card
-                                cover={<img alt="example" src={pic} name="referrer" content="no-referrer" />}
-                                hoverable
-                                style={{ minWidth: "170px", height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
-                                bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
-                                bordered
-                                onClick={() => { showDownloadModal(pages) }}
-                            >
-                                <span>{avTitle}</span><br />
-                                <span>UP: {name}</span><br />
-                                <span>{(view / 10000).toFixed(2)}万播放</span><br />
-                                <span>点击批量下载</span>
-                            </Card>
-                            <div>
-                                <h2>{avTitle}</h2>
-                                <h3>简介</h3>
-                                <p>{desc}</p>
-                            </div>
-                        </div>
-                        <Divider />
-                        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                            {pages.map(page => (
-                                <Card
-                                    key={page.part}
-                                    hoverable
-                                    style={{ minWidth: "170px", maxWidth: '180px', height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
-                                    bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
-                                    bordered
-                                    onClick={() => { showDownloadModal(page) }}
-                                >
-                                    <span>{page.part}</span><br />
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {Array.isArray(epList) && (
-                    <div>
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <Card
-                                cover={<img alt="example" src={cover} name="referrer" content="no-referrer" />}
-                                hoverable
-                                style={{ minWidth: "170px", height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
-                                bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
-                                bordered
-                                onClick={() => { showDownloadModal(epList) }}
-                            >
-                                <span>{epTitle}</span><br />
-                                <span>点击批量下载</span>
-                            </Card>
-                            <div>
-                                <h2>{epTitle}</h2>
-                                <h3>简介</h3>
-                                <p>{evaluate}</p>
-                            </div>
-                        </div>
-                        <Divider />
-                        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                            {epList.map(ep => (
-                                <Card
-                                    key={ep.title}
-                                    hoverable
-                                    cover={<img alt="example" src={ep.cover} name="referrer" content="no-referrer" />}
-                                    style={{ minWidth: "170px", maxWidth: '180px', height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
-                                    bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
-                                    bordered
-                                    onClick={() => { showDownloadModal(ep) }}
-                                >
-                                    <span style={{ width: "170px" }}>{ep.title}</span><br />
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </Skeleton>
+            <VideoContent showDownloadModal={showDownloadModal} avInfo={avInfo} epInfo={epInfo} loading={loading} />
             {
                 downloadInfoModalVisible ? (
                     <DownloadInfoModal
