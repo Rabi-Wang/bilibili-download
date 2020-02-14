@@ -38,14 +38,22 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) =
         responseType: "stream",
         headers,
     })
-    response.data.pipe(writer)
+
+    let size = 0
+    const { data } = response
+    const totalSize = data.rawHeaders[data.rawHeaders.indexOf('Content-Length') + 1]
+    console.log(`文件大小：${totalSize}`)
+    let step = 0
+    data.pipe(writer)
+    data.on('data', (res) => {
+        size += res.length
+        step = (size / totalSize * 100).toFixed(0)
+        console.log(`下载进度：${step}%`)
+    })
     writer.on('finish', () => {
         console.log('下载完成')
     })
-    writer.on('data', (res) => {
-        console.log('data')
-        console.log(res)
-    })
+
 }
 
 exports.downloadCore = downloadCore
