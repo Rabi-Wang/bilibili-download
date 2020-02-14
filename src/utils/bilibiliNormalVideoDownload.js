@@ -1,6 +1,6 @@
 const axios = require('axios')
-const downloadCore = require('./utils/downloadCore').downloadCore
-const getPlayList = require('./utils/getPlayList').getPlayList
+const downloadCore = require('./downloadCore').downloadCore
+const getPlayList = require('./getPlayList').getPlayList
 
 const bilibiliNormalVideoDownload = () => {
 
@@ -10,14 +10,10 @@ const bilibiliNormalVideoDownload = () => {
     * @param quality 视频分辨率
     * return 视频信息(aid, title, cid, pages, quality)
     * */
-    const getVideoInfo = (aid, quality) => {
+    const getVideoInfo = (aid) => {
         let url = `https://api.bilibili.com/x/web-interface/view?aid=${aid}`
         return axios.get(url)
             .then(res => res.data)
-            .then(resData => {
-                const { data: { title, cid, pages } } = resData
-                return { aid, title, cid, pages, quality }
-            })
     }
 
     /*
@@ -41,9 +37,9 @@ const bilibiliNormalVideoDownload = () => {
         downloadInfo.forEach(info => info.url.forEach(url => downloadCore(url, info.title, '', aid, title, downloadPath)))
     }
 
-    const download = async (av, quality = 116, downloadPath) => {
-        const videoInfo = await getVideoInfo(av, quality)
-        console.log(`videoInfo: ${JSON.stringify(videoInfo)}`)
+    const download = async (videoInfo, downloadPath) => {
+        console.log(videoInfo)
+        console.log(`downloadPath: ${downloadPath}`)
         const downloadInfo = await getAllVideoInfo(videoInfo)
         console.log(`downloadInfo: ${JSON.stringify(downloadInfo)}`)
         downloadVideo(downloadInfo, videoInfo, downloadPath)
@@ -51,7 +47,8 @@ const bilibiliNormalVideoDownload = () => {
 
     return {
         normalVideoDownload: download,
+        getVideoInfo: getVideoInfo,
     }
 }
 
-exports.bilibiliNormalVidoDownload = bilibiliNormalVideoDownload().normalVideoDownload
+exports.bilibiliNormalVidoDownload = bilibiliNormalVideoDownload

@@ -1,6 +1,6 @@
 const axios = require('axios')
-const downloadCore = require('./utils/downloadCore').downloadCore
-const getPlayList = require('./utils/getPlayList').getPlayList
+const downloadCore = require('./downloadCore').downloadCore
+const getPlayList = require('./getPlayList').getPlayList
 
 const bilibiliBangumiDownload = () => {
 
@@ -14,17 +14,7 @@ const bilibiliBangumiDownload = () => {
             .then(res => res.data)
             .then(resData => {
                 const filterData = resData.match(/INITIAL_STATE__=(.*?"]})/)
-                const jsonData = JSON.parse(filterData[1])
-                const { epList, mediaInfo: { title } } = jsonData
-                const bangumiInfo = {
-                    bangumiName: title,
-                    epList: epList.map(item => ({
-                        aid: item.aid,
-                        cid: item.cid,
-                        title: `${item.title}${item.longTitle}`
-                    }))
-                }
-                return bangumiInfo
+                return JSON.parse(filterData[1])
             })
     }
 
@@ -49,19 +39,19 @@ const bilibiliBangumiDownload = () => {
         videoInfo.forEach(item => item.url.forEach((url, index) => downloadCore(url, `${item.title}${index > 0 ? `-${index}` : ''}`, ep, '', bangumiName, downloadPath)))
     }
 
-    const bangumiDownload = async (ep, quality = 116, downloadPath) => {
-        const bangumiInfo = await getBangumiInfo(ep)
-        const { epList, bangumiName } = bangumiInfo
+    const bangumiDownload = async (bangumiInfo, downloadPath) => {
+        const { epList, title, ep, quality } = bangumiInfo
         console.log(`epList: ${JSON.stringify(epList)}`)
         const videoInfo = await getAllVideoInfo(epList, quality)
         console.log(`videoInfo: ${JSON.stringify(videoInfo)}`)
-        console.log(`bangumiName: ${bangumiName}`)
-        downloadVideo(videoInfo, ep, bangumiName, downloadPath)
+        console.log(`bangumiName: ${title}`)
+        downloadVideo(videoInfo, ep, title, downloadPath)
     }
 
     return {
         bangumiDownload,
+        getBangumiInfo,
     }
 }
 
-exports.bilibiliBangumiDownload = bilibiliBangumiDownload().bangumiDownload
+exports.bilibiliBangumiDownload = bilibiliBangumiDownload

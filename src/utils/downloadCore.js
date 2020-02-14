@@ -34,9 +34,8 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) =
         headers,
     })
     response.data.pipe(writer)
-    return new Promise((resolve, reject) => {
-        writer.on('finish', resolve)
-        writer.on('error', reject)
+    writer.on('finish', () => {
+        console.log('下载完成')
     })
 }
 
