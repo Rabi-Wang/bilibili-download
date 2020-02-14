@@ -18,7 +18,7 @@ const VideoContent = (props) => {
                         <Card
                             cover={<img alt="example" src={pic} name="referrer" content="no-referrer" />}
                             hoverable
-                            style={{ minWidth: "170px", height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
+                            style={{ minWidth: "170px", minHeight: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
                             bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
                             bordered
                             onClick={() => { showDownloadModal(pages) }}
@@ -28,7 +28,7 @@ const VideoContent = (props) => {
                             <span>{(view / 10000).toFixed(2)}万播放</span><br />
                             <span>点击批量下载</span>
                         </Card>
-                        <div>
+                        <div style={{ margin: "10px" }}>
                             <h2>{avTitle}</h2>
                             <h3>简介</h3>
                             <p>{desc}</p>
@@ -39,13 +39,15 @@ const VideoContent = (props) => {
                         {pages.map(page => (
                             <Card
                                 key={page.part}
+                                cover={<img alt="example" src={pic} name="referrer" content="no-referrer" />}
                                 hoverable
-                                style={{ minWidth: "170px", maxWidth: '180px', height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
+                                style={{ minWidth: "170px", maxWidth: '180px', minHeight: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
                                 bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
                                 bordered
                                 onClick={() => { showDownloadModal(page) }}
                             >
                                 <span>{page.part}</span><br />
+                                <span>单集下载</span>
                             </Card>
                         ))}
                     </div>
@@ -57,7 +59,7 @@ const VideoContent = (props) => {
                         <Card
                             cover={<img alt="example" src={cover} name="referrer" content="no-referrer" />}
                             hoverable
-                            style={{ minWidth: "170px", height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
+                            style={{ minWidth: "170px", minHeight: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
                             bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
                             bordered
                             onClick={() => { showDownloadModal(epList) }}
@@ -78,12 +80,13 @@ const VideoContent = (props) => {
                                 key={ep.title}
                                 hoverable
                                 cover={<img alt="example" src={ep.cover} name="referrer" content="no-referrer" />}
-                                style={{ minWidth: "170px", maxWidth: '180px', height: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
+                                style={{ minWidth: "170px", maxWidth: '180px', minHeight: "170px", padding: "2px", margin: "10px", boxSizing: "border-box" }}
                                 bodyStyle={{ padding: "5px", border: "1px solid #e7e7e7" }}
                                 bordered
                                 onClick={() => { showDownloadModal(ep) }}
                             >
-                                <span style={{ width: "170px" }}>{ep.title}</span><br />
+                                <span>{ep.title}</span><br />
+                                <span>单集下载</span>
                             </Card>
                         ))}
                     </div>
