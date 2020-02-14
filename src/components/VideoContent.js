@@ -36,7 +36,7 @@ const VideoContent = (props) => {
                     </div>
                     <Divider />
                     <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", paddingBottom: "50px" }}>
-                        {pages.map(page => (
+                        {pages.length > 1 && pages.map(page => (
                             <Card
                                 key={page.part}
                                 cover={<img alt="example" src={pic} name="referrer" content="no-referrer" />}
