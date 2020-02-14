@@ -14,7 +14,7 @@ const createWindow = () => {
 
     // win.loadFile('./src/gui/html/index.html')
 
-    win.loadURL('http://localhost:3000')
+    win.loadURL('http://localhost:9997')
     win.webContents.openDevTools()
 }
 

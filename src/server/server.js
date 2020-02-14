@@ -8,7 +8,7 @@ const bilibiliBangumiDownload = require('../utils/bilibiliBangumiDownload').bili
 const app = new Koa()
 
 app.use(cors({
-        origin: ctx => ('http://localhost:3000'),
+        origin: ctx => ('http://localhost:9997'),
         exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
         maxAge: 5,
         credentials: true,

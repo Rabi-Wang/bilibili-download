@@ -10,14 +10,15 @@
     "antd": "^3.26.9",
     "axios": "^0.19.2",
     "electron": "^8.0.0",
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^8.0.7",
+    "koa2-cors": "^2.0.6",
     "props-type": "^1.0.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.1",
-    "koa": "^2.11.0",
-    "koa-bodyparser": "^4.2.1",
-    "koa-router": "^8.0.7",
-    "koa2-cors": "^2.0.6"
+    "react-scroll": "^1.7.16"
   },
   "scripts": {
     "start": "concurrently \"npm run nStart\" \"npm run rStart\" \"npm run eStart\"",
@@ -26,7 +27,7 @@
     "eject": "react-scripts eject",
     "eStart": "electron .",
     "nStart": "node src/server/server.js",
-    "rStart": "react-scripts start"
+    "rStart": "set PORT=9997 && react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"

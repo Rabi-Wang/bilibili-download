@@ -35,7 +35,7 @@ const VideoContent = (props) => {
                         </div>
                     </div>
                     <Divider />
-                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", paddingBottom: "50px" }}>
                         {pages.map(page => (
                             <Card
                                 key={page.part}
@@ -72,7 +72,7 @@ const VideoContent = (props) => {
                         </div>
                     </div>
                     <Divider />
-                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", paddingBottom: "50px" }}>
                         {epList.map(ep => (
                             <Card
                                 key={ep.title}

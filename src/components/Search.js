@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Input } from 'antd'
-import DownloadInfoModal from "./DownloadInfoModal";
-import VideoContent from "./VideoContent";
+import { Input, Affix } from 'antd'
+import DownloadInfoModal from './DownloadInfoModal'
+import VideoContent from './VideoContent'
 
 const initialValue = {
     code: '',
@@ -78,6 +78,9 @@ const Search = () => {
                     setEpInfo(cleanEpInfo)
                     setAvInfo(cleanAvInfo)
                 })
+        } else {
+            setAvInfo(cleanAvInfo)
+            setEpInfo(cleanEpInfo)
         }
     }
 
@@ -93,16 +96,19 @@ const Search = () => {
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", padding: "10px 0" }}>
-                <Input.Search
-                    size="large"
-                    enterButton
-                    onSearch={value => { handleSearch(value) }}
-                    style={{ maxWidth: "600px" }}
-                    loading={loading}
-                    placeholder="输入视频av号或番剧ep号"
-                />
-            </div>
+            <Affix offsetTop={20}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", padding: "10px 0" }}>
+                    <Input.Search
+                        size="large"
+                        enterButton
+                        onSearch={value => { handleSearch(value) }}
+                        style={{ maxWidth: "600px" }}
+                        loading={loading}
+                        placeholder="输入视频av号或番剧ep号"
+                    />
+                </div>
+            </Affix>
+
             <VideoContent showDownloadModal={showDownloadModal} avInfo={avInfo} epInfo={epInfo} loading={loading} />
             {
                 downloadInfoModalVisible ? (
