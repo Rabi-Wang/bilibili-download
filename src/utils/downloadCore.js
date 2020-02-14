@@ -10,8 +10,13 @@ const path = require('path')
     * @param downloadPath 视频保存的路径
     *  */
 const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) => {
+    const pattern=/[\\/:*?"<>|]/g // win10文件禁止使用的字符
+    dirName = dirName.replace(pattern, '')
+    dirName = dirName.substring(0, 100) // 限制文件名的长度
     const newDownloadPath = `${downloadPath}\\${dirName}`
     !fs.existsSync(newDownloadPath) && fs.mkdirSync(newDownloadPath)
+    title = title.replace(pattern, '')
+    title = title.substring(0, 100)
 
     const filePath = path.resolve(newDownloadPath, `${title}.mp4`)
     const writer = fs.createWriteStream(filePath)
@@ -36,6 +41,10 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) =
     response.data.pipe(writer)
     writer.on('finish', () => {
         console.log('下载完成')
+    })
+    writer.on('data', (res) => {
+        console.log('data')
+        console.log(res)
     })
 }
 
