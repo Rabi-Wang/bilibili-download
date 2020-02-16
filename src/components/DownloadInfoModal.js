@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Modal, Checkbox, Select, Divider, Button, Input, Icon, Upload } from 'antd'
+import { Modal, Checkbox, Select, Divider, Button, Input, Icon } from 'antd'
 import PropsType from 'props-type'
 
 const { remote } = window.require('electron')
@@ -164,7 +164,7 @@ const DownloadInfoModal = (props) => {
                     </Select>
                 </div>
                 <Divider />
-                <div>
+                <div style={{ overflowY: "scroll", height: "80%" }}>
                     <Checkbox.Group
                         style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", alignItems: "flex-start" }}
                         options={plainOptions}

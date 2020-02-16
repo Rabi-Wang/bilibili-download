@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Input, Affix } from 'antd'
+import { Input } from 'antd'
 import DownloadInfoModal from './DownloadInfoModal'
 import VideoContent from './VideoContent'
 
@@ -96,19 +96,16 @@ const Search = () => {
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
-            <Affix offsetTop={20}>
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", padding: "10px 0" }}>
-                    <Input.Search
-                        size="large"
-                        enterButton
-                        onSearch={value => { handleSearch(value) }}
-                        style={{ maxWidth: "600px" }}
-                        loading={loading}
-                        placeholder="输入视频av号或番剧ep号"
-                    />
-                </div>
-            </Affix>
-
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", padding: "10px 0" }}>
+                <Input.Search
+                    size="large"
+                    enterButton
+                    onSearch={value => { handleSearch(value) }}
+                    style={{ maxWidth: "600px" }}
+                    loading={loading}
+                    placeholder="输入视频av号或番剧ep号"
+                />
+            </div>
             <VideoContent showDownloadModal={showDownloadModal} avInfo={avInfo} epInfo={epInfo} loading={loading} />
             {
                 downloadInfoModalVisible ? (
