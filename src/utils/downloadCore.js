@@ -48,12 +48,20 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) =
     data.on('data', (res) => {
         size += res.length
         step = (size / totalSize * 100).toFixed(0)
-        console.log(`下载进度：${step}%`)
+        // console.log(`下载进度：${step}%`)
     })
-    writer.on('finish', () => {
-        console.log('下载完成')
+    data.on('error', err => {
+        console.log(err)
     })
-
+    writer.on('error', (err) => {
+        console.log(err)
+    })
+    return new Promise((reslove, reject) => {
+        writer.on('finish', (res) => {
+            console.log('下载完成')
+            reslove('下载完成')
+        })
+    })
 }
 
 exports.downloadCore = downloadCore

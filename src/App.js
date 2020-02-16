@@ -4,24 +4,21 @@ import Search from './components/Search'
 
 const { Header, Content, Footer } = Layout
 
-function App() {
+const socket = require('socket.io-client')('ws://localhost:9995')
+
+const App = () =>{
     useEffect(() => {
-        let ws = new WebSocket('ws://localhost:9995')
-        ws.onopen = () => {
-            // Web Socket 已连接上，使用 send() 方法发送数据
-            ws.send('hello')
-            console.log('数据发送中...')
-        }
-
-        ws.onmessage = (evt) => {
-            let msg = evt.data
-            console.log(`msg: ${msg}`)
-        }
-
-        ws.onclose = () => {
-            // 关闭 websocket
-            console.log('连接已关闭...')
-        }
+        socket.on('login', (data) => {
+            console.log(data)
+        });
+        socket.on('add user', (data) => {
+            console.log(data)
+        });
+        socket.on('message', (data) => {
+            console.log(data)
+        });
+        socket.emit('message', 'hello')
+        console.log('数据发送中...')
     }, [])
 
     return (
@@ -37,7 +34,7 @@ function App() {
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
-                    Bilibili视频下载器
+                Bilibili视频下载器
             </Header>
             <Content
                 style={{

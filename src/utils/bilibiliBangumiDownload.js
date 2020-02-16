@@ -27,25 +27,36 @@ const bilibiliBangumiDownload = () => {
         let newEpList = []
         for(let item of epList) {
             const url = await getPlayList(item.aid, item.cid, quality)
-            newEpList.push({
-                url: url,
-                ...item,
+            url.forEach((u, i) => {
+                newEpList.push({
+                    url: u,
+                    title: `${item.title}${i > 0 ? `-${i}` : ''}`
+                })
             })
         }
         return newEpList
     }
 
-    const downloadVideo = (videoInfo, ep, bangumiName, downloadPath) => {
-        videoInfo.forEach(item => item.url.forEach((url, index) => downloadCore(url, `${item.title}${index > 0 ? `-${index}` : ''}`, ep, '', bangumiName, downloadPath)))
+    const downloadVideo = async (allInfo, sendMessage) => {
+        console.log(allInfo)
+        const { ep, bangumiName, downloadPath, videoInfo } = allInfo
+        videoInfo.forEach(info => {
+            downloadCore(info.url, info.title, ep, '', bangumiName, downloadPath)
+                .then((res) => {
+                    console.log(`下载完成回调：${res}`)
+                    sendMessage(res)
+                })
+        })
+
     }
 
-    const bangumiDownload = async (bangumiInfo, downloadPath) => {
+    const bangumiDownload = async (bangumiInfo, downloadPath, sendMessage) => {
         const { epList, title, ep, quality } = bangumiInfo
-        console.log(`epList: ${JSON.stringify(epList)}`)
+        // console.log(`epList: ${JSON.stringify(epList)}`)
         const videoInfo = await getAllVideoInfo(epList, quality)
-        console.log(`videoInfo: ${JSON.stringify(videoInfo)}`)
-        console.log(`bangumiName: ${title}`)
-        downloadVideo(videoInfo, ep, title, downloadPath)
+        // console.log(`videoInfo: ${JSON.stringify(videoInfo)}`)
+        // console.log(`bangumiName: ${title}`)
+        downloadVideo({ videoInfo, ep, bangumiName: title, downloadPath }, sendMessage)
     }
 
     return {
