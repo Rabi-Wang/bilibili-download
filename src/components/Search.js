@@ -26,17 +26,31 @@ const cleanEpInfo = {
     evaluate: '',
 }
 
-const Search = () => {
-    const [state, setState] = useState(initialValue)
-    const [avInfo, setAvInfo] = useState({})
-    const [epInfo, setEpInfo] = useState({})
-    const [downloadInfo, setDownloadInfo] = useState({})
-    const { loading, downloadInfoModalVisible, code } = state
-    const { avTitle } = avInfo
-    const { epTitle } = epInfo
+const Search = (props) => {
+    // const [state, setState] = useState(initialValue)
+    // const [avInfo, setAvInfo] = useState({})
+    // const [epInfo, setEpInfo] = useState({})
+    // const [downloadInfo, setDownloadInfo] = useState({})
+    // const { loading, downloadInfoModalVisible, code } = state
+    // const { avTitle } = avInfo
+    // const { epTitle } = epInfo
+    const [loading, setLoading] = useState(false)
+    const [downloadInfoModalVisible, setDownloadInfoModalVisible] = useState(false)
+    const [downloadList, setDownloadList] = useState([])
+    const {
+        code, setCode,
+        avInfo, setAvInfo,
+        epInfo, setEpInfo,
+        downloadQuality, setQuality,
+        wrap, setWrap,
+        setProcessInfo,
+    } = props
 
+    console.log(props)
     const handleSearch = (code) => {
         const tmpCode = code.toLowerCase()
+        setCode(tmpCode)
+        setLoading(true)
         const av = /.*av.*/
         const ep = /.*ep.*/
         if(av.test(tmpCode)) {
@@ -48,13 +62,20 @@ const Search = () => {
                     const { code } = resData
                     if(code !== -404 && code !== 62002) {
                         const { data: { pic, title, owner: { name }, stat: { view }, pages, desc } } = resData
-                        setState({ ...state, loading: false, code: tmpCode })
-                        setAvInfo({ pic, avTitle: title, name, view, pages, desc })
-                        setEpInfo(cleanEpInfo)
+                        setLoading(false)
+                        setWrap({ cover: pic, title, owner: name, view: view, desc })
+                        setAvInfo(pages)
+                        setEpInfo([])
+                        // setState({ ...state, loading: false, code: tmpCode })
+                        // setAvInfo({ pic, avTitle: title, name, view, pages, desc })
+                        // setEpInfo(cleanEpInfo)
                     } else {
-                        setState({ ...state, loading: false, code: tmpCode })
-                        setEpInfo(cleanEpInfo)
-                        setAvInfo(cleanAvInfo)
+                        setLoading(false)
+                        setAvInfo([])
+                        setEpInfo([])
+                        // setState({ ...state, loading: false, code: tmpCode })
+                        // setEpInfo(cleanEpInfo)
+                        // setAvInfo(cleanAvInfo)
                     }
                 })
         } else if(ep.test(tmpCode)) {
@@ -69,29 +90,29 @@ const Search = () => {
                         title: ep.titleFormat + ep.longTitle,
                         cover: ep.cover,
                     }))
-                    setState({ ...state, loading: false, code: tmpCode })
-                    setEpInfo({ epList: newEpList, epTitle: title, cover, evaluate })
-                    setAvInfo(cleanAvInfo)
+                    setLoading(false)
+                    setWrap({ title, cover, desc: evaluate })
+                    setEpInfo(newEpList)
+                    setAvInfo([])
+                    // setState({ ...state, loading: false, code: tmpCode })
+                    // setEpInfo({ epList: newEpList, epTitle: title, cover, evaluate })
+                    // setAvInfo(cleanAvInfo)
                 })
                 .catch(err => {
                     console.log(err)
-                    setEpInfo(cleanEpInfo)
-                    setAvInfo(cleanAvInfo)
+                    setEpInfo([])
+                    setAvInfo([])
                 })
         } else {
-            setAvInfo(cleanAvInfo)
-            setEpInfo(cleanEpInfo)
+            setAvInfo([])
+            setEpInfo([])
         }
     }
 
-    const showDownloadModal = (info) => {
-        const infos = Array.isArray(info) ? [...info] : [info]
-        if (/.*av.*/.test(code)) {
-            setDownloadInfo({ aid: code, pages: infos, title: avTitle })
-        } else {
-            setDownloadInfo({ ep: code, epList: infos, title: epTitle })
-        }
-        setState({ ...state, downloadInfoModalVisible: true })
+    const showDownloadModal = (list) => {
+        const newList = Array.isArray(list) ? [...list] : [list]
+        setDownloadList(newList)
+        setDownloadInfoModalVisible(true)
     }
 
     return (
@@ -106,14 +127,31 @@ const Search = () => {
                     placeholder="输入视频av号或番剧ep号"
                 />
             </div>
-            <VideoContent showDownloadModal={showDownloadModal} avInfo={avInfo} epInfo={epInfo} loading={loading} />
+            <VideoContent
+                showDownloadModal={showDownloadModal}
+                loading={loading}
+                {
+                    ...{
+                        ...wrap,
+                        list: /.*av.*/.test(code) ? avInfo : epInfo,
+                        code,
+                    }
+                }
+            />
             {
                 downloadInfoModalVisible ? (
                     <DownloadInfoModal
-                        onOk={() => { setState({ ...state, downloadInfoModalVisible: false })} }
-                        onCancel={() => { setState({ ...state, downloadInfoModalVisible: false })} }
-                        downloadInfo={downloadInfo}
-                        code={code}
+                        onOk={() => { setDownloadInfoModalVisible(false) }}
+                        onCancel={() => { setDownloadInfoModalVisible(false) }}
+                        {
+                            ...{
+                                title: wrap.title,
+                                code,
+                                downloadList: downloadList,
+                                downloadQuality, setQuality,
+                                setProcessInfo,
+                            }
+                        }
                     />
                 ) : ''
             }

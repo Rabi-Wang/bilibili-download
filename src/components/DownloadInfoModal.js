@@ -33,26 +33,32 @@ const qualityMap = (quality) => {
 
 const DownloadInfoModal = (props) => {
     const [state, setState] = useState(initialState)
-    const { onOk, onCancel, downloadInfo, code } = props
-    const { qualities, plainOptions, checkedList, indeterminate, checkedAll, downloadPath, downloadQuality } = state
+    const {
+        onOk,
+        onCancel,
+        title,
+        code,
+        downloadList,
+        downloadQuality, setQuality,
+        setProcessInfo
+    } = props
+    const { qualities, plainOptions, checkedList, indeterminate, checkedAll, downloadPath } = state
 
+    console.log('modal')
+    console.log(props)
     useEffect(() => {
         let plainOptions = []
         const av = /.*av.*/
         const ep = /.*ep.*/
         console.log(props)
         if (av.test(code)) {
-            console.log(downloadInfo)
-            const { pages } = downloadInfo
-            pages.forEach(page => {
+            downloadList.forEach(page => {
                 const { part, cid } = page
                 plainOptions.push({ label: part, value: cid })
             })
             setState({ ...state, plainOptions })
         } else if (ep.test(code)) {
-            const { epList } = downloadInfo
-            console.log(epList)
-            epList.forEach(ep => {
+            downloadList.forEach(ep => {
                 const { title, cid } = ep
                 plainOptions.push({ label: title, value: cid })
             })
@@ -61,7 +67,7 @@ const DownloadInfoModal = (props) => {
     }, [])
 
     const handleQualityChange = (quality) => {
-        setState({ ...state, downloadQuality: quality })
+        setQuality(quality)
     }
 
     const videoChecked = (cid) => {
@@ -80,6 +86,7 @@ const DownloadInfoModal = (props) => {
             checkedAll: checked,
             indeterminate: false,
         })
+
     }
 
     const selectDownloadPath = () => {
@@ -96,7 +103,7 @@ const DownloadInfoModal = (props) => {
     }
 
     const newDownloadInfo = (type) => {
-        let items = type === 'av' ? [...downloadInfo.pages] : [...downloadInfo.epList]
+        let items = [...downloadList]
         let newInfo = []
         for (let checked of checkedList) {
             for (let item of items) {
@@ -118,14 +125,15 @@ const DownloadInfoModal = (props) => {
             url = 'http://localhost:9999/downloadEp'
             type = 'ep'
         }
-        const { title } = downloadInfo
+        const tmp = newDownloadInfo(type)
         const params = {
-            downloadInfo: newDownloadInfo(type),
+            downloadInfo: tmp,
             code: code.substring(2),
             downloadPath,
             downloadQuality,
             title,
         }
+        setProcessInfo(tmp.map(item => ({ title: item.title, step: 0 })))
         axios.post(url, { params })
             .then(res => res.data)
     }
