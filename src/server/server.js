@@ -5,6 +5,28 @@ const bodyParser = require('koa-bodyparser')
 const bilibiliNormalVideoDownload = require('../utils/bilibiliNormalVideoDownload').bilibiliNormalVidoDownload()
 const bilibiliBangumiDownload = require('../utils/bilibiliBangumiDownload').bilibiliBangumiDownload()
 
+const httpServer = require('http').createServer()
+httpServer.listen(9995)
+const socket = require('socket.io')(httpServer)
+
+socket.on('connection',  socket => {
+        console.log('client connect server, ok!');
+        socket.emit('message', {msg: 'world'});
+        socket.on('disconnect', () => {
+                console.log('connect disconnect');
+        });
+        socket.on('message', (msg) => {
+                console.log(msg);// hi server
+        });
+})
+
+const sendMessage = (msg, type = 'message') => {
+        // console.log(`send msg:${msg}`)
+        // console.log(type)
+        // console.log(msg)
+        socket.emit(type, msg)
+}
+
 const app = new Koa()
 
 app.use(cors({
@@ -65,23 +87,3 @@ router.post('/downloadEp', async (ctx) => {
 app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(9999)
-
-const httpServer = require('http').createServer()
-httpServer.listen(9995)
-const socket = require('socket.io')(httpServer)
-
-socket.on('connection',  socket => {
-        console.log('client connect server, ok!');
-        socket.emit('message', {msg: 'world'});
-        socket.on('disconnect', () => {
-                console.log('connect disconnect');
-        });
-        socket.on('message', (msg) => {
-                console.log(msg);// hi server
-        });
-})
-
-const sendMessage = (msg) => {
-        console.log(`send msg:${msg}`)
-        socket.emit('message', msg)
-}

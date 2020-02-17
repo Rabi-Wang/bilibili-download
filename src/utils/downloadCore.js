@@ -9,7 +9,7 @@ const path = require('path')
     * @param bangumiName 对应番剧名的文件夹
     * @param downloadPath 视频保存的路径
     *  */
-const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) => {
+const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath, sendMessage) => {
     const pattern=/[\\/:*?"<>|]/g // win10文件禁止使用的字符
     dirName = dirName.replace(pattern, '')
     dirName = dirName.substring(0, 100) // 限制文件名的长度
@@ -45,9 +45,11 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath) =
     console.log(`文件大小：${totalSize}`)
     let step = 0
     data.pipe(writer)
+
     data.on('data', (res) => {
         size += res.length
-        step = (size / totalSize * 100).toFixed(0)
+        step = (size / totalSize * 100.00).toFixed(2)
+        step % 10 === 0 && sendMessage({ title, step }, 'step')
         // console.log(`下载进度：${step}%`)
     })
     data.on('error', err => {
