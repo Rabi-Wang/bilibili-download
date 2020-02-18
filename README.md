@@ -1,4 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## 声明
 ### 本项目仅供学习使用，请勿挪作商用
