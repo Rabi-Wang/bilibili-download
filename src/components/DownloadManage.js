@@ -40,4 +40,9 @@ const DownloadManage = (props) => {
     )
 }
 
+DownloadManage.propsType = {
+    setProcessInfo: PropsType.func,
+    getProcessInfo: PropsType.func,
+}
+
 export default DownloadManage

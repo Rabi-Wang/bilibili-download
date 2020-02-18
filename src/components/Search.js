@@ -1,30 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Input } from 'antd'
+import PropsType from 'props-type'
 import DownloadInfoModal from './DownloadInfoModal'
 import VideoContent from './VideoContent'
-
-const initialValue = {
-    code: '',
-    loading: false,
-    downloadInfoModalVisible: false,
-}
-
-const cleanAvInfo = {
-    pages: '',
-    pic: '',
-    avTitle: '',
-    name: '',
-    view: '',
-    desc: '',
-}
-
-const cleanEpInfo = {
-    epTitle: '',
-    epList: '',
-    cover: '',
-    evaluate: '',
-}
 
 const Search = (props) => {
     const [loading, setLoading] = useState(false)
@@ -140,8 +119,21 @@ const Search = (props) => {
                 ) : ''
             }
         </div>
-
     )
+}
+
+Search.propsTyps = {
+    code: PropsType.string,
+    setCode: PropsType.func,
+    avInfo: PropsType.array,
+    setAvInfo: PropsType.func,
+    epInfo: PropsType.array,
+    setEpInfo: PropsType.func,
+    downloadQuality: PropsType.number,
+    setQuality: PropsType.func,
+    setProcessInfo: PropsType.func,
+    wrap: PropsType.object,
+    setWrap: PropsType.func,
 }
 
 export default Search

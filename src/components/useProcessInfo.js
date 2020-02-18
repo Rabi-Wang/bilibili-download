@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import _ from 'lodash'
-// const socket = require('socket.io-client')('ws://localhost:9995')
 
 let processInfo = []
 
 function useProcessInfo() {
-    // const [processInfo, insideSetProcessInfo] = useState([])
 
     const setProcessInfo = (newProcessInfo, isPush) => {
         console.log(newProcessInfo)
@@ -34,16 +32,6 @@ function useProcessInfo() {
     const getProcessInfo = () => {
         return processInfo
     }
-
-    // useEffect(() => {
-    //     socket.on('step', s => {
-    //         const tmp = [...processInfo]
-    //         const newInfo = tmp.map(item => {
-    //             return item.title === s.title ? { ...item, step: parseFloat(s.step) } : { ...item }
-    //         })
-    //         processInfo = [...newInfo]
-    //     })
-    // }, [])
 
     return [getProcessInfo, setProcessInfo]
 }

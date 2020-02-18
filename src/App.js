@@ -8,19 +8,6 @@ import useProcessInfo from './components/useProcessInfo'
 const { Header, Content, Footer } = Layout
 
 const socket = require('socket.io-client')('ws://localhost:9995')
-// const processInfo = []
-// function reducer(state, action) {
-//     const setProcessInfo = (newProcessInfo) => {
-//         let tmp = [...procssInfo]
-//         newProcessInfo.forEach(item => {
-//             tmp.push(item)
-//         })
-//         insideSetProcessInfo(tmp)
-//     }
-//     switch (action.type) {
-//         case 'add':
-//     }
-// }
 
 const App = () =>{
     const [code, setCode] = useState('')

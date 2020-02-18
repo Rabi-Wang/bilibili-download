@@ -190,8 +190,12 @@ const DownloadInfoModal = (props) => {
 DownloadInfoModal.propsType = {
     onOk: PropsType.func,
     onCancel: PropsType.func,
-    downloadInfo: {},
     code: PropsType.string,
+    title: PropsType.string,
+    downloadList: PropsType.array,
+    downloadQuality: PropsType.number,
+    setQuality: PropsType.func,
+    setProcessInfo: PropsType.func,
 }
 
 export default DownloadInfoModal
