@@ -46,10 +46,12 @@ const downloadCore = async (downloadUrl, title, ep, av, dirName, downloadPath, s
     let step = 0
     data.pipe(writer)
 
+    let lastStep
     data.on('data', (res) => {
         size += res.length
         step = (size / totalSize * 100.00).toFixed(2)
-        step % 10 === 0 && sendMessage({ title, step }, 'step')
+        step % 10 === 0 && lastStep !== step && sendMessage({ title, step }, 'step')
+        lastStep = step
         // console.log(`下载进度：${step}%`)
     })
     data.on('error', err => {

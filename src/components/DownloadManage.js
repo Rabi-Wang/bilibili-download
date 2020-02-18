@@ -5,24 +5,25 @@ import { Progress } from 'antd'
 const socket = require('socket.io-client')('ws://localhost:9995')
 
 const DownloadManage = (props) => {
-    const { downloadInfo, setInfo } = props
+    const { setProcessInfo, getProcessInfo } = props
+    const [localProcessInfo, setLocalProcessInfo] = useState(getProcessInfo())
 
     console.log(props)
     useEffect(() => {
         socket.on('step', s => {
-            console.log('step')
-            console.log(s)
-            const tmp = [...downloadInfo]
+            const tmp = [...localProcessInfo]
             const newInfo = tmp.map(item => {
-                return item.title === s.title ? { ...item, step: s.step } : { ...item }
+                return item.title === s.title ? { ...item, step: parseFloat(s.step) } : { ...item }
             })
-            setInfo(newInfo)
+            // console.log(newInfo)
+            setProcessInfo(newInfo)
+            setLocalProcessInfo(getProcessInfo())
         })
     }, [])
 
     return (
         <div style={{ marginTop: "10px" }}>
-            {Array.isArray(downloadInfo) ? downloadInfo.map(item => (
+            {Array.isArray(localProcessInfo) && localProcessInfo.map(item => (
                 <div key={item.title} style={{ display: "float" }}>
                     <div
                         style={{ float: "left", width: "30%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "inlineBlock", margin: "0" }}
@@ -31,10 +32,10 @@ const DownloadManage = (props) => {
                     <Progress
                         style={{ float: "right", width: "70%" }}
                         percent={item.step}
-                        status="active"
+                        status={100.00 - item.step < 0.1 ? 'success' : 'active'}
                     />
                 </div>
-            )) : 'test'}
+            ))}
         </div>
     )
 }

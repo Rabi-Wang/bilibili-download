@@ -27,13 +27,6 @@ const cleanEpInfo = {
 }
 
 const Search = (props) => {
-    // const [state, setState] = useState(initialValue)
-    // const [avInfo, setAvInfo] = useState({})
-    // const [epInfo, setEpInfo] = useState({})
-    // const [downloadInfo, setDownloadInfo] = useState({})
-    // const { loading, downloadInfoModalVisible, code } = state
-    // const { avTitle } = avInfo
-    // const { epTitle } = epInfo
     const [loading, setLoading] = useState(false)
     const [downloadInfoModalVisible, setDownloadInfoModalVisible] = useState(false)
     const [downloadList, setDownloadList] = useState([])
@@ -42,8 +35,8 @@ const Search = (props) => {
         avInfo, setAvInfo,
         epInfo, setEpInfo,
         downloadQuality, setQuality,
-        wrap, setWrap,
         setProcessInfo,
+        wrap, setWrap,
     } = props
 
     console.log(props)
@@ -66,16 +59,10 @@ const Search = (props) => {
                         setWrap({ cover: pic, title, owner: name, view: view, desc })
                         setAvInfo(pages)
                         setEpInfo([])
-                        // setState({ ...state, loading: false, code: tmpCode })
-                        // setAvInfo({ pic, avTitle: title, name, view, pages, desc })
-                        // setEpInfo(cleanEpInfo)
                     } else {
                         setLoading(false)
                         setAvInfo([])
                         setEpInfo([])
-                        // setState({ ...state, loading: false, code: tmpCode })
-                        // setEpInfo(cleanEpInfo)
-                        // setAvInfo(cleanAvInfo)
                     }
                 })
         } else if(ep.test(tmpCode)) {
@@ -94,9 +81,6 @@ const Search = (props) => {
                     setWrap({ title, cover, desc: evaluate })
                     setEpInfo(newEpList)
                     setAvInfo([])
-                    // setState({ ...state, loading: false, code: tmpCode })
-                    // setEpInfo({ epList: newEpList, epTitle: title, cover, evaluate })
-                    // setAvInfo(cleanAvInfo)
                 })
                 .catch(err => {
                     console.log(err)

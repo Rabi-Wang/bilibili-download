@@ -32,17 +32,23 @@ const bilibiliNormalVideoDownload = () => {
         return downloadInfos
     }
 
-    const downloadVideo = (downloadInfo, videoInfo, downloadPath) => {
+    const downloadVideo = (downloadInfo, videoInfo, downloadPath, sendMessage) => {
         const { title, aid } = videoInfo
-        downloadInfo.forEach(info => info.url.forEach(url => downloadCore(url, info.title, '', aid, title, downloadPath)))
+        downloadInfo.forEach(info => info.url.forEach(url => {
+            downloadCore(url, info.title, '', aid, title, downloadPath, sendMessage)
+                .then(res => {
+                    console.log(`下载完成回调：${res}`)
+                    sendMessage(res, 'message')
+                })
+        }))
     }
 
-    const download = async (videoInfo, downloadPath) => {
-        console.log(videoInfo)
-        console.log(`downloadPath: ${downloadPath}`)
+    const download = async (videoInfo, downloadPath, sendMessage) => {
+        // console.log(videoInfo)
+        // console.log(`downloadPath: ${downloadPath}`)
         const downloadInfo = await getAllVideoInfo(videoInfo)
-        console.log(`downloadInfo: ${JSON.stringify(downloadInfo)}`)
-        downloadVideo(downloadInfo, videoInfo, downloadPath)
+        // console.log(`downloadInfo: ${JSON.stringify(downloadInfo)}`)
+        downloadVideo(downloadInfo, videoInfo, downloadPath, sendMessage)
     }
 
     return {

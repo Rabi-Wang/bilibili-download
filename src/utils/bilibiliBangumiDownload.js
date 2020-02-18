@@ -37,14 +37,14 @@ const bilibiliBangumiDownload = () => {
         return newEpList
     }
 
-    const downloadVideo = async (allInfo, sendStep) => {
+    const downloadVideo = async (allInfo, sendMessage) => {
         console.log(allInfo)
         const { ep, bangumiName, downloadPath, videoInfo } = allInfo
         videoInfo.forEach(info => {
-            downloadCore(info.url, info.title, ep, '', bangumiName, downloadPath, sendStep)
+            downloadCore(info.url, info.title, ep, '', bangumiName, downloadPath, sendMessage)
                 .then((res) => {
                     console.log(`下载完成回调：${res}`)
-                    sendStep(res, 'message')
+                    sendMessage(res, 'message')
                 })
         })
 

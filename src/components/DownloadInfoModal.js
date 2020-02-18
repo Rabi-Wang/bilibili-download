@@ -7,7 +7,6 @@ const { remote } = window.require('electron')
 
 const initialState = {
     qualities: [116, 112, 80, 74, 64, 32, 16],
-    downloadQuality: 116,
     plainOptions: [],
     checkedList: [],
     indeterminate: false,
@@ -40,7 +39,7 @@ const DownloadInfoModal = (props) => {
         code,
         downloadList,
         downloadQuality, setQuality,
-        setProcessInfo
+        setProcessInfo,
     } = props
     const { qualities, plainOptions, checkedList, indeterminate, checkedAll, downloadPath } = state
 
@@ -102,7 +101,7 @@ const DownloadInfoModal = (props) => {
         setState({ ...state, downloadPath: newPath })
     }
 
-    const newDownloadInfo = (type) => {
+    const newDownloadInfo = () => {
         let items = [...downloadList]
         let newInfo = []
         for (let checked of checkedList) {
@@ -125,7 +124,9 @@ const DownloadInfoModal = (props) => {
             url = 'http://localhost:9999/downloadEp'
             type = 'ep'
         }
-        const tmp = newDownloadInfo(type)
+        const tmp = newDownloadInfo()
+        console.log(tmp)
+        console.log(downloadList)
         const params = {
             downloadInfo: tmp,
             code: code.substring(2),
@@ -133,9 +134,10 @@ const DownloadInfoModal = (props) => {
             downloadQuality,
             title,
         }
-        setProcessInfo(tmp.map(item => ({ title: item.title, step: 0 })))
+        setProcessInfo(tmp.map(item => ({ title: item.title || item.part, step: 0 })), true)
         axios.post(url, { params })
             .then(res => res.data)
+        onOk()
     }
 
     const footer = (

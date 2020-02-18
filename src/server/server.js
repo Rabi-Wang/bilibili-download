@@ -70,7 +70,7 @@ router.post('/downloadAv', async (ctx) => {
                 aid: code,
                 quality: downloadQuality,
                 title,
-        }, downloadPath)
+        }, downloadPath, sendMessage)
 })
 
 router.post('/downloadEp', async (ctx) => {

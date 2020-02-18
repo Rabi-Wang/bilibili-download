@@ -1,30 +1,40 @@
-import React, { useEffect, useState, Provider } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import { Layout, Menu, Icon } from 'antd'
 import { Link, BrowserRouter, Switch, Route, Router } from 'react-router-dom'
 import Search from './components/Search'
 import DownloadManage from './components/DownloadManage'
+import useProcessInfo from './components/useProcessInfo'
 
 const { Header, Content, Footer } = Layout
 
 const socket = require('socket.io-client')('ws://localhost:9995')
+// const processInfo = []
+// function reducer(state, action) {
+//     const setProcessInfo = (newProcessInfo) => {
+//         let tmp = [...procssInfo]
+//         newProcessInfo.forEach(item => {
+//             tmp.push(item)
+//         })
+//         insideSetProcessInfo(tmp)
+//     }
+//     switch (action.type) {
+//         case 'add':
+//     }
+// }
 
 const App = () =>{
     const [code, setCode] = useState('')
-    const [processInfo, setProcessInfo] = useState([])
     const [avInfo, setAvInfo] = useState([])
     const [epInfo, setEpInfo] = useState([])
     const [title, setTitle] = useState('')
     const [downloadQuality, setQuality] = useState(116)
     const [wrap, setWrap] = useState({ title: '', cover: '', desc: '', owner: '', view: '' })
+    const [getProcessInfo, setProcessInfo] = useProcessInfo()
 
     useEffect(() => {
         socket.on('message', msg => {
             console.log(`message: ${msg}`)
         });
-        socket.on('step', step => {
-            // console.log(`step: ${step}`)
-            // console.log(step)
-        })
     }, [])
 
     return (
@@ -75,7 +85,7 @@ const App = () =>{
                                 )
                         }} />
                         <Route exact path="/downloadManage" render={() => {
-                            return (<DownloadManage downloadInfo={processInfo} setInfo={setProcessInfo} />)
+                            return (<DownloadManage getProcessInfo={getProcessInfo} setProcessInfo={setProcessInfo} />)
                         }} />
                     </Switch>
                 </Content>
