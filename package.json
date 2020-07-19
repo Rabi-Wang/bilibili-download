@@ -14,7 +14,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^8.0.7",
     "koa2-cors": "^2.0.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "props-type": "^1.0.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
